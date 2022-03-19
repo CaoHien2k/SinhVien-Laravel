@@ -16,25 +16,23 @@
     <table class="table table-bordered">
         <tr>
             <th>Tên</th>
-            <th>Lớp</th>
-            <th>Ngày sinh</th>
-            <th>Số điện thoại</th>
-            <th>Địa chỉ</th>
             <th>Email</th>
+            <th>Mật khẩu</th>
             <th>Thao tác</th>
         </tr>
         @foreach($users as $user)
         <tr>
-            <td>{{$user->name}}</a></td>
-            <td>{{$user->grade}}</td>
-            <td>{{date('d-m-Y', strtotime($user->birthday))}}</td>
-            <td>{{$user->phone}}</td>
-            <td>{{$user->address}}</td>
-            <td>{{$user->email}}</td>        
+            <td><a href="{{route('users.showProfile',$user->id)}}">{{$user->name}}</a></td>            
+            <td>{{$user->email}}</td>
+            <td>{{$user->password}}</td>
+                   
             <td>
                 <a class="btn btn-primary" href="{{route('users.edit',$user->id)}}">Sửa</a>
-                <a class="btn btn-danger" href="{{route('users.destroy',$user->id)}}">Xóa</a>
-                
+                <form action="{{route('users.destroy',$user->id)}}" method="POST" onsubmit="return confirm('Bạn có chắc chắn xóa');" style="display: inline-block;">
+                    @csrf
+                    <input type="submit" class="btn btn-danger" value="Xóa">
+                </form>  
+                <a class="btn btn-info" href="{{route('users.showSubject',$user->id)}}">Môn học</a>            
             </td>
         </tr>
         @endforeach

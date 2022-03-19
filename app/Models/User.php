@@ -25,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'email',
         'password',
+        'image',
     ];
 
     /**
@@ -45,4 +46,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function subjects(){
+        return $this->belongsToMany('App\Models\Subject');
+    }
+    public function profile(){
+        return $this->hasOne('App\Models\Profile');
+    }
 }

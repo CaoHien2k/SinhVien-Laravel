@@ -21,10 +21,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/sinh-vien','App\Http\Controllers\UserController@index')->name('users.index');
-Route::get('/sinh-vien/them','App\Http\Controllers\UserController@create')->name('users.create');
-Route::post('/sinh-vien/them','App\Http\Controllers\UserController@store')->name('users.store');
-Route::get('/sinh-vien/{id}/sua','App\Http\Controllers\UserController@edit')->name('users.edit');
-Route::post('/sinh-vien/{id}/sua','App\Http\Controllers\UserController@update')->name('users.update');
-Route::get('/sinh-vien/{id}/xóa','App\Http\Controllers\UserController@destroy')->name('users.destroy');
+Route::resource('users', 'App\Http\Controllers\UserController');
+Route::get('/users/{id}/show-subject','App\Http\Controllers\UserController@showSubject')->name('users.showSubject');
+Route::get('/users/{id}/show-profile','App\Http\Controllers\UserController@showProfile')->name('users.showProfile');
 
