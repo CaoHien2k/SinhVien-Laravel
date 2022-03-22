@@ -2,6 +2,9 @@
 @section('title')
     <title>Danh sách sinh viên</title>
 @endsection
+@section('styles')
+
+@endsection
 @section('content')
     <div>
         <a class="btn btn-success" href="{{route('users.create')}}">Thêm sinh viên</a>
@@ -13,31 +16,21 @@
             {{session()->get('success')}}
         </div>
     @endif
-    <table class="table table-bordered">
-        <tr>
-            <th>Tên</th>
-            <th>Email</th>
-            <th>Mật khẩu</th>
-            <th>Thao tác</th>
-        </tr>
-        @foreach($users as $user)
-        <tr>
-            <td><a href="{{route('users.showProfile',$user->id)}}">{{$user->name}}</a></td>            
-            <td>{{$user->email}}</td>
-            <td>{{$user->password}}</td>
-                   
-            <td>
-                <a class="btn btn-primary" href="{{route('users.edit',$user->id)}}">Sửa</a>
-                <form action="{{route('users.destroy',$user->id)}}" method="POST" onsubmit="return confirm('Bạn có chắc chắn xóa');" style="display: inline-block;">
-                    @csrf
-                    <input type="submit" class="btn btn-danger" value="Xóa">
-                </form>  
-                <a class="btn btn-info" href="{{route('users.showSubject',$user->id)}}">Môn học</a>            
-            </td>
-        </tr>
-        @endforeach
+    <table class="table table-bordered data-table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Họ và Tên</th>
+                <th>Email</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
     </table>
-    <div style="display: flex; justify-content: center;">{{$users->links()}}</div>
+   
+   
+
 <script>
     $("#success-alert").fadeTo(1000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
@@ -46,5 +39,55 @@
     $("#danger-alert").fadeTo(1000, 500).slideUp(500, function(){
     $("#danger-alert").slideUp(500);
     });
+
+    $(function () {
+    
+    var table = $('.data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('users.index') }}",
+        columns: [
+            {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+            {data: 'name', name: 'name'},
+            {data: 'email', name: 'email'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ]
+    });
+    
+    $.ajaxSetup({
+    headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $('body').on('click','.deleteUser',function(){
+        var user_id = $(this).data('id');
+        confirm('Bạn có chắc chắn xóa?');
+        $.ajax({
+            type:"DELETE",
+            url:"{{route('users.store')}}" + '/' + user_id,
+            success: function(data){
+                table.draw();
+                alert(success);
+            },
+            error:function(data){
+            console.log('Error:', data);
+            }
+            
+        });
+    });
+    $('body').on('click','.editUser',function(){
+        var user_id = $(this).data('id');
+        var url = new URL(window.location);
+        url = 'http://localhost/laravel/SinhVien/public/users/'+user_id+'/edit';
+        window.location.href = url;
+    });
+    $('body').on('click','.subjectUser',function(){
+        var user_id = $(this).data('id');
+        var url = new URL(window.location);
+        url = 'http://localhost/laravel/SinhVien/public/users/'+user_id+'/show-subject';
+        window.location.href = url;
+    });
+
+  });
 </script>    
 @endsection

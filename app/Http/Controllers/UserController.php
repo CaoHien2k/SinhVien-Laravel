@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Profile;
 use Validator;
+use App\DataTables\UserDataTable;
+use DataTables;
 
 class UserController extends Controller
 {
@@ -14,10 +16,30 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate(3);
-        return view('users.index',compact('users'));
+        // $users = User::paginate(3);
+
+        // return view('users.index',compact('users'));
+        // return $dataTable->render('users.index');
+
+        if ($request->ajax()) {
+            $data = User::latest()->get();
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+                           $btn = '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-primary editUser">Sửa</a> ';    
+                           $btn .= '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-danger deleteUser">Xóa</a> ';
+                           $btn .= '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-success subjectUser">Môn học</a>';
+     
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+      
+        return view('users.index');
+
     }
 
     /**
@@ -132,6 +154,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+
         $user = User::findOrFail($id);
         return view('users.edit',compact('user'));
     }
@@ -180,8 +203,10 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        
         User::destroy($id);
-        return redirect()->route('users.index')->with('success','xóa sinh viên thành công');
+        return response()->json(['success'=> 'Xóa thành công']);
+        // return redirect()->route('users.index')->with('success','xóa sinh viên thành công');
     }
     public function showSubject($id)
     {
