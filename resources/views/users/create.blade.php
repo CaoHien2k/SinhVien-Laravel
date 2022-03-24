@@ -6,7 +6,7 @@
 @endsection
 @section('content')
 <div class="alert alert-danger print-error-msg" style="display:none">
-    <ul></ul>
+    <ul>llllllllllllllllllll</ul>
 </div>
 <div class="container">
   <form action="{{route('users.store')}}" method="post"  enctype="multipart/form-data">
@@ -64,6 +64,7 @@
     </div>
     <button type="submit" class="btn btn-primary btn-submit">Thêm</button>
   </form>
+
 </div>
 @endsection
 
