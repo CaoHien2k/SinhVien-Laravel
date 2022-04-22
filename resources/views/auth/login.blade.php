@@ -64,6 +64,22 @@
                                 @endif
                             </div>
                         </div>
+                        <br>
+                        <div class="row mb-3">
+                            <label for="password" class="col-md-4 col-form-label text-md-end">&nbsp;</label>
+                            <div class="col-md-6">                               
+                                <a href="{{ url('auth/google') }}" class="btn btn-lg btn-danger btn-block">
+                                    <strong>Login With Google</strong>
+                                </a> 
+                            </div>
+                            <div style="padding:5px"></div>
+                            <label for="password" class="col-md-4 col-form-label text-md-end">&nbsp;</label>
+                            <div class="col-md-6">                               
+                                <a href="{{ url('auth/facebook') }}" class="btn btn-lg btn-primary btn-block">
+                                    <strong>Login With FaceBook</strong>
+                                </a> 
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>

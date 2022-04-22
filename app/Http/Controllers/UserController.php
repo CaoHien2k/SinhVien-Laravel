@@ -7,7 +7,15 @@ use App\Models\User;
 use App\Models\Profile;
 use Validator;
 use App\DataTables\UserDataTable;
+use App\Exports\UsersExport;
+use App\Imports\UsersImport;
+use App\Notifications\ImportHasFailedNotification;
 use DataTables;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Notifications\MyFirstNotification;
+use Barryvdh\DomPDF\PDF;
 
 class UserController extends Controller
 {
@@ -16,30 +24,47 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-        // $users = User::paginate(3);
+    // public function index(Request $request)
+    // {
+    //     // $users = User::paginate(3);
 
-        // return view('users.index',compact('users'));
-        // return $dataTable->render('users.index');
+    //     // return view('users.index',compact('users'));
+    //     // return $dataTable->render('users.index');
 
-        if ($request->ajax()) {
-            $data = User::latest()->get();
-            return Datatables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-                           $btn = '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-primary editUser">Sửa</a> ';    
-                           $btn .= '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-danger deleteUser">Xóa</a> ';
-                           $btn .= '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-success subjectUser">Môn học</a>';
+    //     // $data = DB::table('users')->select('users.*')                               
+    //     //                           ->where(DB::raw("(DATE_FORMAT(created_at,'%Y-%m'))"),"2022-03")
+    //     //                           ->orderBy('users.created_at')
+    //     //                           ->get();
+
+    //     //so sánh 2 column bằng nhau
+    //     // $data = DB::table('users')
+    //     //         ->whereColumn('updated_at','created_at')
+    //     //         ->get();
+    //     // dd($data);
+
+    //     if ($request->ajax()) {
+    //         $data = User::latest()->get();
+    //         return Datatables::of($data)
+    //                 ->addIndexColumn()
+    //                 ->addColumn('action', function($row){
+    //                        $btn = '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-primary editUser">Sửa</a> ';    
+    //                        $btn .= '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-danger deleteUser">Xóa</a> ';
+    //                        $btn .= '<a href="javascript:void(0)"  data-id="' . $row->id . '" class="btn btn-success subjectUser">Môn học</a>';
      
-                            return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
+    //                         return $btn;
+    //                 })
+    //                 ->rawColumns(['action'])
+    //                 ->make(true);
+    //     }
       
-        return view('users.index');
+    //     return view('users.index');
 
+    // }
+
+    public function index(UserDataTable $dataTable)
+    {
+        // dd($dataTable);
+        return $dataTable->render('users.index');
     }
 
     /**
@@ -63,7 +88,7 @@ class UserController extends Controller
         $request->validate([
             'name' =>'required',
             // 'phone' =>'numeric|unique:users|min:10',
-            'email' =>'email|required',
+            'email' =>'email|required|unique:users',
             'password' =>'min:3|max:10'
         ],[
             'name.required' => 'bắt buộc nhập tên',
@@ -218,5 +243,59 @@ class UserController extends Controller
         $user = User::with('profile')->findOrFail($id);
         return view('users.showProfile', compact('user'));
         
+    }
+
+    
+    public function importExportView()
+    {
+       return view('import');
+    }
+   
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function export() 
+    {
+        return Excel::download(new UsersExport, 'users.xlsx');
+    }
+   
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function import() 
+    {
+        // Excel::import(new UsersImport,request()->file('file'));
+        // Excel::queueImport(new UsersImport,request()->file('file'));   
+        $user = User::first();
+        $import = new UsersImport($user);
+        $import->import(request()->file('file'));
+
+        // dd($import->errors());
+        return back();
+    }
+
+    public function sendNotification()
+    {
+        $user = User::first();
+  
+        $details = [
+            'greeting' => 'Hi Artisan',
+            'body' => 'This is my first notification from ItSolutionStuff.com',
+            'thanks' => 'Thank you for using ItSolutionStuff.com tuto!',
+            'actionText' => 'View My Site',
+            'actionURL' => url('/'),
+            'order_id' => 101
+        ];
+  
+        $user->notify(new MyFirstNotification($details));
+        
+        dd('done');
+    }
+
+     public function generatePDF(PDF $pdf)
+    {
+        $users = User::all();    
+        $bill = $pdf->loadView('myPDF', compact('users'));
+        return $pdf->download('users.pdf');
     }
 }

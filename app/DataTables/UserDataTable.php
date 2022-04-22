@@ -46,7 +46,11 @@ class UserDataTable extends DataTable
                     ->setTableId('user-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->orderBy(1);
+                    ->orderBy(1)
+                    ->parameters([
+                        'dom'          => 'Bfrtip',
+                        'buttons'      => ['excel', 'csv','pdf'],
+                    ]);
     }
 
     /**
@@ -57,9 +61,9 @@ class UserDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'id',
-            'name',
-            'email',
+            Column::make('id'),
+            Column::make('name'),
+            Column::make('email'),
             // 'password',
         ];
     }

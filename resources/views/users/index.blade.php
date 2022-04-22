@@ -3,9 +3,13 @@
     <title>Danh sách sinh viên</title>
 @endsection
 @section('styles')
-
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap4.min.css">
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap4.min.js"></script>
+<script src="/vendor/datatables/buttons.server-side.js"></script>
 @endsection
 @section('content')
+    @include('layouts.menu')
     <div>
         <a class="btn btn-success" href="{{route('users.create')}}">Thêm sinh viên</a>
     </div>
@@ -16,7 +20,9 @@
             {{session()->get('success')}}
         </div>
     @endif
-    <table class="table table-bordered data-table">
+    {!! $dataTable->table() !!}  
+    {!! $dataTable->scripts() !!}
+    {{-- <table class="table table-bordered data-table">
         <thead>
             <tr>
                 <th>STT</th>
@@ -27,67 +33,65 @@
         </thead>
         <tbody>
         </tbody>
-    </table>
+    </table> --}}
    
-   
-
-<script>
-    $("#success-alert").fadeTo(1000, 500).slideUp(500, function(){
-    $("#success-alert").slideUp(500);
-    });
-
-    $("#danger-alert").fadeTo(1000, 500).slideUp(500, function(){
-    $("#danger-alert").slideUp(500);
-    });
-
-    $(function () {
-    
-    var table = $('.data-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('users.index') }}",
-        columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-            {data: 'name', name: 'name'},
-            {data: 'email', name: 'email'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
-        ]
-    });
-    
-    $.ajaxSetup({
-    headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    $('body').on('click','.deleteUser',function(){
-        var user_id = $(this).data('id');
-        confirm('Bạn có chắc chắn xóa?');
-        $.ajax({
-            type:"DELETE",
-            url:"{{route('users.store')}}" + '/' + user_id,
-            success: function(data){
-                table.draw();
-                alert(success);
-            },
-            error:function(data){
-            console.log('Error:', data);
-            }
-            
+    {{-- <script>
+        $("#success-alert").fadeTo(1000, 500).slideUp(500, function(){
+        $("#success-alert").slideUp(500);
         });
-    });
-    $('body').on('click','.editUser',function(){
-        var user_id = $(this).data('id');
-        var url = new URL(window.location);
-        url = 'http://localhost/laravel/SinhVien/public/users/'+user_id+'/edit';
-        window.location.href = url;
-    });
-    $('body').on('click','.subjectUser',function(){
-        var user_id = $(this).data('id');
-        var url = new URL(window.location);
-        url = 'http://localhost/laravel/SinhVien/public/users/'+user_id+'/show-subject';
-        window.location.href = url;
-    });
-
-  });
-</script>    
+    
+        $("#danger-alert").fadeTo(1000, 500).slideUp(500, function(){
+        $("#danger-alert").slideUp(500);
+        });
+    
+        $(function () {
+        
+        var table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('users.index') }}",
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'name', name: 'name'},
+                {data: 'email', name: 'email'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
+            ]
+        });
+        
+        $.ajaxSetup({
+        headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('body').on('click','.deleteUser',function(){
+            var user_id = $(this).data('id');
+            confirm('Bạn có chắc chắn xóa?');
+            $.ajax({
+                type:"DELETE",
+                url:"{{route('users.store')}}" + '/' + user_id,
+                success: function(data){
+                    table.draw();
+                    alert(success);
+                },
+                error:function(data){
+                console.log('Error:', data);
+                }
+                
+            });
+        });
+        $('body').on('click','.editUser',function(){
+            var user_id = $(this).data('id');
+            var url = new URL(window.location);
+            url = 'http://localhost/laravel/SinhVien/public/users/'+user_id+'/edit';
+            window.location.href = url;
+        });
+        $('body').on('click','.subjectUser',function(){
+            var user_id = $(this).data('id');
+            var url = new URL(window.location);
+            url = 'http://localhost/laravel/SinhVien/public/users/'+user_id+'/show-subject';
+            window.location.href = url;
+        });
+    
+      });
+    </script>   --}}
 @endsection
