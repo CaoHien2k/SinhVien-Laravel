@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LangController;
 use App\Http\Controllers\PaypalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -58,3 +59,6 @@ Route::get('/chatbot', function () {
     return view('chatbot');
 });
 Route::match(['get', 'post'], '/botman', 'App\Http\Controllers\BotManController@handle');
+
+
+Route::get('lang/change', [LangController::class, 'change'])->name('changeLang');

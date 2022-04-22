@@ -11,7 +11,7 @@
 @section('content')
     @include('layouts.menu')
     <div>
-        <a class="btn btn-success" href="{{route('users.create')}}">Thêm sinh viên</a>
+        <a class="btn btn-success" href="{{route('users.create')}}">{{ __('messages.title') }}</a>
     </div>
     <br>
     @if(session()->has('success'))

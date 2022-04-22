@@ -45,20 +45,21 @@
                     <ul class="navbar-nav me-auto">
 
                     </ul>
-
+                    
+                    
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">Đăng nhập</a>
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('messages.login') }}</a>
                                 </li>
                             @endif
 
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">Đăng ký</a>
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('messages.register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -81,14 +82,37 @@
                             </li>
                         @endguest
                     </ul>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-6 text-right">
+                        <strong>Language:</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-control changeLang">
+                            <option value="en" {{ session()->get('locale') == 'en' ? 'selected' : '' }}>English</option>
+                            <option value="fr" {{ session()->get('locale') == 'fr' ? 'selected' : '' }}>France</option>
+                            <option value="vn" {{ session()->get('locale') == 'vn' ? 'selected' : '' }}>VN</option>
+                        </select>
+                    </div>
                 </div>
             </div>
+            
         </nav>
        
         <div class="container" style="margin-top:15px">
             @yield('content')
         </div>
         @yield('scripts')
+        <script type="text/javascript">
+  
+            var url = "{{ route('changeLang') }}";
+          
+            $(".changeLang").change(function(){
+                window.location.href = url + "?lang="+ $(this).val();
+            });
+          
+        </script>
     </div>
 </body>
 
