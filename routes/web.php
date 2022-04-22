@@ -53,3 +53,8 @@ Route::get('export', 'App\Http\Controllers\UserController@export')->name('export
 Route::post('import', 'App\Http\Controllers\UserController@import')->name('import');
 Route::get('send', 'App\Http\Controllers\UserController@sendNotification');
 Route::get('pdf','App\Http\Controllers\UserController@generatePDF');
+
+Route::get('/chatbot', function () {
+    return view('chatbot');
+});
+Route::match(['get', 'post'], '/botman', 'App\Http\Controllers\BotManController@handle');
